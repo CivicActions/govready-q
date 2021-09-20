@@ -7,7 +7,6 @@ v0.9.12-dev (September xx, 2021)
 **Developer changes**
 
 * Update .gitattributes configuration for EOL character for cross-platform development.
-* Add smaller, page specific dictionary, page_data, of template values to Controls view.
 
 
 v0.9.11 (September 18, 2021)
@@ -80,6 +79,24 @@ NOTE: GovReady-q container name changed from `govready_q_dev` to `govready-q-dev
 * Set all user's `name` to `username` as part of data migration.
 * Add Speedy SSP with CMMC catalog.
 
+**Component page data**
+
+* Add smaller, page specific dictionary, page_data, of template values to Controls view keyed by the control label.
+
+Example:
+
+```python
+page_data["AC-01(02)"] = {
+  "description": "Automatically [Selection: remove; disable] temporary...",
+  "family": "Access Control",
+  "guidance": "Management of temporary and emergency accounts includes the...",
+  "implementation": "Management of temporary and emergency accounts includes the...",,
+  "label": "AC-01(02)",
+  "narrative": "This is fulfilled through automated tools and manual processes...",
+  "sid": "ac-1.2",
+  "status": "Implemented",
+}
+```
 
 v0.9.10.1 (August 16, 2021)
 ---------------------------
