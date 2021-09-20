@@ -9,6 +9,25 @@ v0.9.12-dev (September xx, 2021)
 * Update .gitattributes configuration for EOL character for cross-platform development.
 
 
+**Component page data**
+
+* Adding smaller, page specific dictionary, page_data, of template values to Controls view keyed by the control label, for.
+
+Example:
+
+```python
+page_data["AC-01(02)"] = {
+    "description": "Automatically [Selection: remove; disable] temporary...",
+    "family": "Access Control",
+    "guidance": "Management of temporary and emergency accounts includes the...",
+    "implementation": "Management of temporary and emergency accounts includes the...",,
+    "label": "AC-01(02)",
+    "narrative": "This is fulfilled through automated tools and manual processes...",
+    "sid": "ac-1.2",
+    "status": "Implemented",
+}
+```
+
 v0.9.11 (September 18, 2021)
 ----------------------------
 
