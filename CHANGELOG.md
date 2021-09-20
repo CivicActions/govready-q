@@ -7,6 +7,7 @@ v0.9.12-dev (September xx, 2021)
 **Developer changes**
 
 * Update .gitattributes configuration for EOL character for cross-platform development.
+* Add smaller, page specific dictionary, page_data, of template values to Controls view.
 
 
 v0.9.11 (September 18, 2021)
