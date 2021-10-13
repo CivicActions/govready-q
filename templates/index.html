@@ -19,8 +19,8 @@ Welcome to Compliance Automation
       <ul class="nav nav-tabs" role="tablist">
         {% if not hide_registration %}
          <li id="tab-register" role="presentation" {% if request.POST.action|escapejs != 'login' %}class="active"{% endif %}><a href="#register" aria-controls="register" role="tab" data-toggle="tab">Register</a></li>
-         {% endif %}
          <li id="tab-signin" role="presentation" {% if request.POST.action|escapejs == 'login' %}class="active"{% endif %}><a href="#signin" aria-controls="signin" role="tab" data-toggle="tab">Sign in</a></li>
+         {% endif %}
       </ul>
 
       <!-- Tab panes -->
