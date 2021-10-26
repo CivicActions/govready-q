@@ -30,7 +30,7 @@ from discussion.models import Discussion
 from guidedmodules.models import (Module, ModuleQuestion, ProjectMembership,
                                   Task)
 
-from controls.models import Element, System, Statement, Poam, Deployment
+from controls.models import Element, ElementControl System, Statement, Poam, Deployment
 from system_settings.models import SystemSettings, Classification, Sitename
 
 from .forms import PortfolioForm, EditProjectForm, AccountSettingsForm
@@ -1063,6 +1063,24 @@ def project(request, project):
     else:
         security_sensitivity = None
 
+    # Get total number of controls assigned to the Project (based on baseline).
+    total_controls = ElementControl.objects.filter(element_id=project.system.root_element).count()
+    # Get a count of the Statuses for the controls; Assessed, Ready for Assessment, ...
+    stat = (ElementControl.objects
+        .filter(element_id=project.system.root_element)
+        .values("status")
+        .annotate(scount=Count("status"))
+        .order_by()
+    )
+    # Get the Status allowed values
+    es = ElementControl.Statuses.choices
+    st = dict(es)
+    statuses = {}
+    # Add the counts to a dictionary keyed by the Status label; {"Assessed": 1, "Ready for Assessement": 3,...}
+    for els in stat:
+        statuses[st[els["status"]]] = els["scount"]
+
+
     security_objective_smt = project.system.root_element.statements_consumed.filter(statement_type=StatementTypeEnum.SECURITY_IMPACT_LEVEL.name)
     if security_objective_smt.exists():
         security_body = project.system.get_security_impact_level
@@ -1124,6 +1142,8 @@ def project(request, project):
         "elements": elements,
         "producer_elements_control_impl_smts_dict": producer_elements_control_impl_smts_dict,
         "producer_elements_control_impl_smts_status_dict": producer_elements_control_impl_smts_status_dict,
+        "total_controls": total_controls,
+        "statuses": statuses,
     })
 
 def project_edit(request, project_id):
