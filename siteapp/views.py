@@ -9,6 +9,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Permission
 from django.db import transaction
+from django.db.models import Count
 from django.db.models import Q
 from django.forms import ModelForm, model_to_dict
 from django.http import (Http404, HttpResponse, HttpResponseForbidden,
@@ -30,7 +31,7 @@ from discussion.models import Discussion
 from guidedmodules.models import (Module, ModuleQuestion, ProjectMembership,
                                   Task)
 
-from controls.models import Element, ElementControl System, Statement, Poam, Deployment
+from controls.models import Element, ElementControl, System, Statement, Poam, Deployment
 from system_settings.models import SystemSettings, Classification, Sitename
 
 from .forms import PortfolioForm, EditProjectForm, AccountSettingsForm
@@ -1079,7 +1080,6 @@ def project(request, project):
     # Add the counts to a dictionary keyed by the Status label; {"Assessed": 1, "Ready for Assessement": 3,...}
     for els in stat:
         statuses[st[els["status"]]] = els["scount"]
-
 
     security_objective_smt = project.system.root_element.statements_consumed.filter(statement_type=StatementTypeEnum.SECURITY_IMPACT_LEVEL.name)
     if security_objective_smt.exists():
