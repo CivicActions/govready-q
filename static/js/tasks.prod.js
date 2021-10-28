@@ -1,1 +1,0 @@
-"use strict";jQuery(document).ready(function(t){t("#cfacts-link").click(function(c){c.preventDefault(),t("#cfacts-download").submit()})});
