@@ -1147,7 +1147,8 @@ def project(request, project):
         "producer_elements_control_impl_smts_dict": producer_elements_control_impl_smts_dict,
         "producer_elements_control_impl_smts_status_dict": producer_elements_control_impl_smts_status_dict,
         "total_controls_count": total_controls_count,
-        "controls_addressed_count": controls_addressed_count
+        "controls_addressed_count": controls_addressed_count,
+        "nav": nav,
     })
 
 
@@ -1269,6 +1270,8 @@ def project_settings(request, project):
             av_info["reason"] = project.is_safe_upgrade(av)
         available_versions.append(av_info)
 
+    nav = project_navigation(request, project)
+
     # Render.
     return render(request, "project_settings.html", {
         "is_project_page": True,
@@ -1288,7 +1291,8 @@ def project_settings(request, project):
         "portfolios": Portfolio.objects.all(),
         "users": User.objects.all(),
 
-        "import_project_form": ImportProjectForm()
+        "import_project_form": ImportProjectForm(),
+        "nav": nav,
     })
 
 

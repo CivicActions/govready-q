@@ -33,6 +33,7 @@ from simple_history.utils import update_change_reason
 from controls.oscal import Catalogs
 from siteapp.models import Project, Organization, Tag
 from siteapp.settings import GOVREADY_URL
+import siteapp.views as project_nav
 from system_settings.models import SystemSettings
 from .forms import ElementEditForm
 from .forms import ImportOSCALComponentForm, SystemAssessmentResultForm
@@ -181,7 +182,7 @@ def controls_selected(request, system_id):
             .order_by('sid')
         impl_smts_cmpts_count = dict((c_count['sid'], c_count['component_count'])
                                       for c_count in component_counts)
-        
+
         # Get list of catalog objects
 
         # TODO: we should fix the template so that we don't require
@@ -190,14 +191,16 @@ def controls_selected(request, system_id):
         # them from the list.
 
         internal_catalog_keys = [
-            Catalogs.CMMC_ver1, Catalogs.NIST_SP_800_171_rev1, 
+            Catalogs.CMMC_ver1, Catalogs.NIST_SP_800_171_rev1,
             Catalogs.NIST_SP_800_53_rev4, Catalogs.NIST_SP_800_53_rev5
         ]
         external_catalogs = [
             catalog for catalog in Catalogs.catalogs()
             if catalog.catalog_key not in internal_catalog_keys
         ]
-        
+
+        nav = project_nav.project_navigation(request, project)
+
         # Return the controls
         context = {
             "system": system,
@@ -207,6 +210,7 @@ def controls_selected(request, system_id):
             "impl_smts_cmpts_count": impl_smts_cmpts_count,
             "impl_smts_legacy_dict": impl_smts_legacy_dict,
             "enable_experimental_opencontrol": SystemSettings.enable_experimental_opencontrol,
+            "nav": nav,
         }
 
         html = render(request, "systems/controls_selected.html", context)
@@ -404,6 +408,7 @@ class SelectedComponentsList(ListView):
             context['project'] = project
             context['system'] = system
             context['elements'] = Element.objects.all().exclude(element_type='system')
+            context['nav'] = project_nav.project_navigation(self.request, project)
             return context
         else:
             # User does not have permission to this system
@@ -1358,7 +1363,7 @@ def component_library_component(request, element_id):
             "form_source": "component_library",
             "inheritances": inheritances,
         }
-        return render(request, "components/element_detail_tabs.html", context)   
+        return render(request, "components/element_detail_tabs.html", context)
 
     # TODO: We may have multiple catalogs in this case in the future
     # Retrieve used catalog_key
