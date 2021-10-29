@@ -1102,6 +1102,7 @@ def project(request, project):
     producer_elements_control_impl_smts_dict = project.system.producer_elements_control_impl_smts_dict
     producer_elements_control_impl_smts_status_dict = project.system.producer_elements_control_impl_smts_status_dict
 
+    nav = project_navigation(request, project)
     # Render.
     return render(request, "project.html", {
         "is_project_page": True,
@@ -1148,6 +1149,44 @@ def project(request, project):
         "total_controls_count": total_controls_count,
         "controls_addressed_count": controls_addressed_count
     })
+
+
+def project_navigation(request, project):
+    purl = project.get_absolute_url()
+    task = project.root_task.get_or_create_subtask(request.user, "ssp_intro")
+    nav = {
+        "home": {
+            "url": purl,
+            "title": "Project Home",
+            "id": "project-home",
+        },
+        "settings": {
+            "url": purl + "/settings",
+            "title": "Project Settings",
+            "id": "project-settings",
+        },
+        "invite": {
+            "url": "#",
+            "title": "Invite Collaborators",
+            "id": "project-invite",
+        },
+        "ssp": {
+            "url": task.get_absolute_url(),
+            "title": "System Security Plan",
+            "id": "project-ssp"
+        },
+        "controls": {
+            "url": "/systems/" + str(project.system.id) + "/controls/selected",
+            "title": "Controls",
+            "id": "project-controls",
+        },
+        "components": {
+            "url": "/systems/" + str(project.system.id) + "/components/selected",
+            "title": "Components",
+            "id": "project-components",
+        },
+    }
+    return nav
 
 def project_edit(request, project_id):
     if request.method == 'POST':
