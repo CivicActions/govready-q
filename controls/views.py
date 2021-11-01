@@ -31,7 +31,7 @@ from django.views import View
 from django.views.generic import ListView
 from simple_history.utils import update_change_reason
 from controls.oscal import Catalogs
-from siteapp.models import Project, Organization, Tag
+from siteapp.models import Project, Invitation, Organization, Tag
 from siteapp.settings import GOVREADY_URL
 import siteapp.views as project_nav
 from system_settings.models import SystemSettings
@@ -210,6 +210,7 @@ def controls_selected(request, system_id):
             "impl_smts_cmpts_count": impl_smts_cmpts_count,
             "impl_smts_legacy_dict": impl_smts_legacy_dict,
             "enable_experimental_opencontrol": SystemSettings.enable_experimental_opencontrol,
+            "send_invitation": Invitation.form_context_dict(request.user, project, [request.user]),
             "nav": nav,
         }
 
@@ -404,11 +405,12 @@ class SelectedComponentsList(ListView):
         if self.request.user.has_perm('view_system', system):
             # Retrieve primary system Project
             # Temporarily assume only one project and get first project
-            project = system.projects.first()
+            project = Project.objects.filter(system_id=system.id).first()
             context['project'] = project
             context['system'] = system
             context['elements'] = Element.objects.all().exclude(element_type='system')
             context['nav'] = project_nav.project_navigation(self.request, project)
+            context['send_invitation'] = Invitation.form_context_dict(self.request.user, project, [self.request.user]),
             return context
         else:
             # User does not have permission to this system

@@ -1111,38 +1111,28 @@ def project(request, project):
         "confidentiality": confidentiality,
         "integrity": integrity,
         "availability": availability,
-
         "controls_status_count": project.system.controls_status_count,
         "poam_status_count": project.system.poam_status_count,
         "percent_compliant": percent_compliant,
         "percent_compliant_100": percent_compliant * 100,
         "approx_compliance_degrees": approx_compliance_degrees,
-
         "is_admin": request.user in project.get_admins(),
         "can_upgrade_app": can_upgrade_app,
         "can_start_task": can_start_task,
         "can_start_any_apps": can_start_any_apps,
-
         "title": project.title,
-        # "open_invitations": other_open_invitations,
         "send_invitation": Invitation.form_context_dict(request.user, project, [request.user]),
         "has_outputs": has_outputs,
-
         "enable_experimental_evidence": SystemSettings.enable_experimental_evidence,
-
         "layout_mode": layout_mode,
         "columns": columns,
         "action_buttons": action_buttons,
-
         "projects": Project.objects.all(),
         "portfolios": Portfolio.objects.all(),
         "users": User.objects.all(),
-
         "class_status": Classification.objects.last(),
-
         "authoring_tool_enabled": authoring_tool_enabled,
         "import_project_form": ImportProjectForm(),
-
         "elements": elements,
         "producer_elements_control_impl_smts_dict": producer_elements_control_impl_smts_dict,
         "producer_elements_control_impl_smts_status_dict": producer_elements_control_impl_smts_status_dict,
@@ -1276,21 +1266,16 @@ def project_settings(request, project):
     return render(request, "project_settings.html", {
         "is_project_page": True,
         "project": project,
-
         "is_admin": request.user in project.get_admins(),
         "can_upgrade_app": project.root_task.module.app.has_upgrade_priv(request.user),
         "available_versions": available_versions,
-
         "title": project.title,
         "open_invitations": other_open_invitations,
         "send_invitation": Invitation.form_context_dict(request.user, project, [request.user]),
-
         "action_buttons": action_buttons,
-
         "projects": Project.objects.all(),
         "portfolios": Portfolio.objects.all(),
         "users": User.objects.all(),
-
         "import_project_form": ImportProjectForm(),
         "nav": nav,
     })

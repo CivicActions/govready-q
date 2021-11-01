@@ -1251,6 +1251,7 @@ def task_finished(request, task, answered, context, *unused_args):
         "next_module_spec": next_module_spec,
         "gr_pdf_generator": settings.GR_PDF_GENERATOR,
         "export_csv_form": ExportCSVTemplateSSPForm(),
+        "send_invitation": Invitation.form_context_dict(request.user, project, [request.user]),
         "nav": nav,
     })
     return render(request, "task-finished.html", context)
