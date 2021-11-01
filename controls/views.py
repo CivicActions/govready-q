@@ -1139,6 +1139,9 @@ def system_element(request, system_id, element_id):
         opencontrol_string = OpenControlComponentSerializer(element, impl_smts).as_yaml()
         states = [choice_tup[1] for choice_tup in ComponentStateEnum.choices()]
         types = [choice_tup[1] for choice_tup in ComponentTypeEnum.choices()]
+
+        nav = project_nav.project_navigation(request, project)
+
         # Return the system's element information
         context = {
             "states": states,
@@ -1154,6 +1157,8 @@ def system_element(request, system_id, element_id):
             "enable_experimental_opencontrol": SystemSettings.enable_experimental_opencontrol,
             "opencontrol": opencontrol_string,
             "page_data": page_data,
+            "send_invitation": Invitation.form_context_dict(request.user, project, [request.user]),
+            "nav": nav,
         }
         return render(request, "systems/element_detail_tabs.html", context)
 
@@ -1194,6 +1199,9 @@ def system_element_control(request, system_id, element_id, catalog_key, control_
         opencontrol_string = OpenControlComponentSerializer(element, impl_smts).as_yaml()
         states = [choice_tup[1] for choice_tup in ComponentStateEnum.choices()]
         types = [choice_tup[1] for choice_tup in ComponentTypeEnum.choices()]
+
+        nav = project_nav.project_navigation(request, project)
+
         # Return the system's element information
         context = {
             "states": states,
@@ -1210,6 +1218,8 @@ def system_element_control(request, system_id, element_id, catalog_key, control_
             "enable_experimental_opencontrol": SystemSettings.enable_experimental_opencontrol,
             "opencontrol": opencontrol_string,
             "page_data": page_data,
+            "send_invitation": Invitation.form_context_dict(request.user, project, [request.user]),
+            "nav": nav,
         }
         return render(request, "systems/element_detail_control.html", context)
 
