@@ -408,7 +408,7 @@ class SelectedComponentsList(ListView):
         if self.request.user.has_perm('view_system', system):
             # Retrieve primary system Project
             # Temporarily assume only one project and get first project
-            project = Project.objects.filter(system_id=system.id).first()
+            project = system.projects.first()
             context['project'] = project
             context['system'] = system
             context['elements'] = Element.objects.all().exclude(element_type='system')
