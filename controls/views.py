@@ -12,32 +12,34 @@ from urllib.parse import quote, urlunparse
 from uuid import uuid4
 
 import rtyaml
+import siteapp.views as project_nav
 import trestle.oscal.component as trestlecomponent
 import trestle.oscal.ssp as trestlessp
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.db.models import Q
-from django.db.models import Count
+from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
+from django.db.models import Count, Q
 from django.db.models.functions import Lower
-from django.http import Http404, HttpResponse, HttpResponseRedirect, HttpResponseForbidden, JsonResponse, \
-    HttpResponseNotAllowed
+from django.http import (Http404, HttpResponse, HttpResponseForbidden,
+                         HttpResponseNotAllowed, HttpResponseRedirect,
+                         JsonResponse)
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils.text import slugify
 from django.views import View
 from django.views.generic import ListView
 from simple_history.utils import update_change_reason
-from controls.oscal import Catalogs
-from siteapp.models import Project, Invitation, Organization, Tag
+from siteapp.models import Invitation, Organization, Project, Tag
 from siteapp.settings import GOVREADY_URL
-import siteapp.views as project_nav
 from system_settings.models import SystemSettings
-from .forms import ElementEditForm
-from .forms import ImportOSCALComponentForm, SystemAssessmentResultForm
-from .forms import StatementPoamForm, PoamForm, ElementForm, DeploymentForm
+
+from controls.oscal import Catalogs
+
+from .forms import (DeploymentForm, ElementEditForm, ElementForm,
+                    ImportOSCALComponentForm, PoamForm, StatementPoamForm,
+                    SystemAssessmentResultForm)
 from .models import *
 from .utilities import *
 
@@ -45,6 +47,7 @@ logging.basicConfig()
 import structlog
 from structlog import get_logger
 from structlog.stdlib import LoggerFactory
+
 structlog.configure(logger_factory=LoggerFactory())
 structlog.configure(processors=[structlog.processors.JSONRenderer()])
 logger = get_logger()
@@ -1652,9 +1655,10 @@ def controls_selected_export_xacta_xslx(request, system_id):
             else:
                 setattr(control, 'impl_smts', None)
 
-        from openpyxl import Workbook
-        from openpyxl.styles import Border, Side, PatternFill, Font, Alignment
         from tempfile import NamedTemporaryFile
+
+        from openpyxl import Workbook
+        from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
 
         wb = Workbook()
         ws = wb.active
@@ -1964,6 +1968,8 @@ def editor(request, system_id, catalog_key, cl_id):
 
         elements =  Element.objects.all().exclude(element_type='system')
 
+        nav = project_nav.project_navigation(request, project)
+
         context = {
             "system": system,
             "project": project,
@@ -1977,6 +1983,8 @@ def editor(request, system_id, catalog_key, cl_id):
             "opencontrol": "opencontrol_string",
             "elements": elements,
             "element_control": element_control,
+            "send_invitation": Invitation.form_context_dict(request.user, project, [request.user]),
+            "nav": nav,
         }
         return render(request, "controls/editor.html", context)
     else:
@@ -2983,9 +2991,11 @@ def poam_export(request, system_id, format='xlsx'):
     if request.user.has_perm('view_system', system):
 
         if format == 'xlsx':
-            from openpyxl import Workbook
-            from openpyxl.styles import Border, Side, PatternFill, Font, Alignment
             from tempfile import NamedTemporaryFile
+
+            from openpyxl import Workbook
+            from openpyxl.styles import (Alignment, Border, Font, PatternFill,
+                                         Side)
 
             wb = Workbook()
             ws = wb.active
@@ -2993,7 +3003,8 @@ def poam_export(request, system_id, format='xlsx'):
             wrap_alignment = Alignment(wrap_text=True)
             ws.title = "POA&Ms"
         else:
-            import csv, io
+            import csv
+            import io
             csv_buffer = io.StringIO(newline='\n')
             csv_writer = csv.writer(csv_buffer)
 
